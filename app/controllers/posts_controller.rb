@@ -5,12 +5,14 @@ class PostsController < ApplicationController
 
   def new
     @post = Post.new
-    form_options
+    setup_form_options
   end
 
   def edit
-    form_options
+    setup_form_options
     @post = Post.find(params[:id])
+    @comments = @post.comments
+    @post.comments.build
   end
 
   def show
@@ -19,6 +21,7 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+    setup_form_options
     if @post.save
       flash[:success] = "Good job."
       redirect_to post_path(@post)
@@ -29,13 +32,13 @@ class PostsController < ApplicationController
   end
 
   def update
-    #fail
     @post = Post.find(params[:id])
+    setup_form_options
     if @post.update(post_params)
       flash[:sucess] = "It saved the update."
       redirect_to post_path(@post)
     else
-      flash.now = "It did not save the update."
+      flash.now[:error] = "It did not save the update. #{@post.errors.full_messages.join}"
       render :edit
     end
   end
@@ -43,10 +46,13 @@ class PostsController < ApplicationController
   private
 
   def post_params
-    params.require(:post).permit(:title, :body, :category_id, :tag_ids => [])
+    params.require(:post).permit(:title, :body, :category_id, :parent_post, 
+                                  :tag_ids => [],
+                                   :comments_attributes => 
+                                      [:id, :body, :_destroy] )
   end
 
-  def form_options
+  def setup_form_options
     @category_options = Category.all.map { |c| [c.name, c.id]} << ['n/a', 'na']
     @tag_options = Tag.all.map{ |t| [t.name, t.id]}
   end

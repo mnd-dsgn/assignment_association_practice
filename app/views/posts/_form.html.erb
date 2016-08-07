@@ -1,6 +1,6 @@
 <%if true %>
   <%= form_for(post,  :html => {id: 'some_id', class: 'some_class'}) do |f| %>
-    <%= f.label("title") %><br>
+    <%= f.label :title %><br>
     <%= f.text_field(:title)  %><br>
     <%= f.label("body") %><br>
     <%= f.text_field(:body) %><br>
@@ -13,6 +13,13 @@
           @tag_options,
           {},
           multiple: true) %>
+    <br>
+    <%= f.fields_for :comments, post.comments do |comment_field| %>
+      <h4>Comment:</h4>
+      <%= comment_field.label :body %><br>
+      <%= comment_field.text_field :body %>
+    <% end %>
+
     <%= f.submit %>
   <% end %>
 <% end %>

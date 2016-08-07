@@ -8,6 +8,10 @@
 <% @post.tags.each do |tag| %>
   <p><%= tag.name  %></p>
 <% end %>
+<% @post.comments.each do |comment| %>
+  <h3>Comment:</h3>
+  <%= comment.body %>
+<% end %>
 
 <%= @post.category.name if @post.category %>
 
